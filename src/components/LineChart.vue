@@ -1,0 +1,44 @@
+<template>
+  <div ref="chartRef" class="chart"></div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import * as echarts from 'echarts';
+const chartRef = ref(null);
+const chartInstance = ref(null);
+const options = computed(() => {
+  return {
+    xAxis: {
+      type: 'category',
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        data: [150, 230, 224, 218, 135, 147, 260],
+        type: 'line'
+      }
+    ],
+    tooltip: {
+      show: true,
+      trigger: 'item'
+    }
+  }
+})
+
+onMounted(() => {
+  chartInstance.value = echarts.init(chartRef.value);
+  chartInstance.value.setOption(options.value);
+})
+
+</script>
+
+<style scoped>
+.chart {
+  width: calc(100vw - 4rem);
+  height: 300px;
+}
+</style>
