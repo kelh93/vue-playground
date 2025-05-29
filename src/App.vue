@@ -28,52 +28,52 @@ onMounted(() => {
     pinch: (evt) => {
       // 计算新的缩放值
       let newScale = transform.lastScale * evt.zoom
-      
+
       // 限制缩放范围
       if (newScale < transform.minScale) newScale = transform.minScale
       if (newScale > transform.maxScale) newScale = transform.maxScale
-      
+
       transform.scale = newScale
-      
+
       // 应用变换
       applyTransform()
     },
-    
+
     // 捏合结束时保存最后的缩放值
     pinchend: () => {
       transform.lastScale = transform.scale
     },
-    
+
     // 双击重置所有变换
     doubleTap: () => {
       resetTransform()
     },
-    
+
     // 拖动处理（仅当放大时可移动）
     pressMove: (evt) => {
       // 只有当缩放大于1时才允许移动
       if (transform.scale <= 1) return
-      
+
       // 计算新的位置
       transform.translateX = transform.lastTranslateX + evt.deltaX
       transform.translateY = transform.lastTranslateY + evt.deltaY
-      
+
       // 限制移动范围，防止内容移出太远
-      const maxTranslate = (transform.scale - 1) * 150 // 根据缩放比例计算最大移动距离
-      transform.translateX = Math.max(Math.min(transform.translateX, maxTranslate), -maxTranslate)
-      transform.translateY = Math.max(Math.min(transform.translateY, maxTranslate), -maxTranslate)
-      
+      // const maxTranslate = (transform.scale - 1) * 150 // 根据缩放比例计算最大移动距离
+      // transform.translateX = Math.max(Math.min(transform.translateX, maxTranslate), -maxTranslate)
+      // transform.translateY = Math.max(Math.min(transform.translateY, maxTranslate), -maxTranslate)
+
       // 应用变换
       applyTransform()
     },
-    
+
     // 移动结束时保存最后的位置
     pressEnd: () => {
       transform.lastTranslateX = transform.translateX
       transform.lastTranslateY = transform.translateY
     }
   })
-  
+
   // 初始应用变换
   applyTransform()
 })
@@ -81,10 +81,10 @@ onMounted(() => {
 // 应用变换到DOM元素
 function applyTransform() {
   if (!appBox.value) return
-  
+
   appBox.value.style.transform = `scale(${transform.scale}) translate(${transform.translateX}px, ${transform.translateY}px)`
   appBox.value.style.transformOrigin = 'center center'
-  
+
   // 只在重置时添加过渡效果
   const isReset = transform.scale === 1 && transform.translateX === 0 && transform.translateY === 0
   appBox.value.style.transition = isReset ? 'transform 0.3s' : 'none'
@@ -127,7 +127,8 @@ function resetTransform() {
 
 .app-container {
   width: 100%;
-  touch-action: none; /* 防止浏览器默认的触摸行为干扰 */
+  touch-action: none;
+  /* 防止浏览器默认的触摸行为干扰 */
 }
 
 .scale-info {
