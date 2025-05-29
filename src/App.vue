@@ -3,10 +3,16 @@
 import LineChart from './components/LineChart.vue'
 import BarChart from './components/BarChart.vue'
 import AlloyFinger from 'alloyfinger'
+import VConsole from 'vconsole'
 
+const vConsole = new VConsole()
+
+const initScale = 1;
 const af = new AlloyFinger(document.body, {
   pinch: (evt) => {
-    console.log(evt)
+    document.body.scaleX = document.body.el.scaleY = initScale * evt.zoom;
+    console.log('evt.zoom', evt.zoom);
+    console.log('scale', document.body.scaleX);
   }
 })
 </script>
