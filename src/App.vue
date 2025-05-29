@@ -1,5 +1,6 @@
 <script setup>
 // import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue'
 import LineChart from './components/LineChart.vue'
 import BarChart from './components/BarChart.vue'
 import AlloyFinger from 'alloyfinger'
