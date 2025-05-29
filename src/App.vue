@@ -75,13 +75,15 @@ function applyTransform() {
 <style scoped>
 .app-container {
   width: 100%;
+  height: 100vh;
+  padding-top: 2rem;
   touch-action: none;
   /* 防止浏览器默认的触摸行为干扰 */
 }
 
 .scale-info {
   position: fixed;
-  top: 10px;
+  top: 15px;
   right: 10px;
   background: rgba(0, 0, 0, 0.5);
   color: white;
