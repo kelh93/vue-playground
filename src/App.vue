@@ -2,6 +2,13 @@
 // import HelloWorld from './components/HelloWorld.vue'
 import LineChart from './components/LineChart.vue'
 import BarChart from './components/BarChart.vue'
+import AlloyFinger from 'alloyfinger'
+
+const af = new AlloyFinger(document.body, {
+  pinch: (evt) => {
+    console.log(evt)
+  }
+})
 </script>
 
 <template>
