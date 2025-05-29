@@ -1,6 +1,6 @@
 <script setup>
 // import HelloWorld from './components/HelloWorld.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import LineChart from './components/LineChart.vue'
 import BarChart from './components/BarChart.vue'
 import AlloyFinger from 'alloyfinger'
@@ -10,13 +10,17 @@ const vConsole = new VConsole()
 
 const initScale = 1;
 const appBox = ref(null)
-const af = new AlloyFinger(appBox.value, {
-  pinch: (evt) => {
-    appBox.value.scaleX = appBox.value.scaleY = initScale * evt.zoom;
-    console.log('evt.zoom', evt.zoom);
-    console.log('scale', appBox.value.scaleX);
-  }
+
+onMounted(() => {
+  const af = new AlloyFinger(appBox.value, {
+    pinch: (evt) => {
+      appBox.value.scaleX = appBox.value.scaleY = initScale * evt.zoom;
+      console.log('evt.zoom', evt.zoom);
+      console.log('scale', appBox.value.scaleX);
+    }
+  })
 })
+
 </script>
 
 <template>
