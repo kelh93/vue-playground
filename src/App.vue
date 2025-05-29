@@ -8,17 +8,18 @@ import VConsole from 'vconsole'
 const vConsole = new VConsole()
 
 const initScale = 1;
-const af = new AlloyFinger(document.body, {
+const appBox = ref(null)
+const af = new AlloyFinger(appBox.value, {
   pinch: (evt) => {
-    document.body.scaleX = document.body.el.scaleY = initScale * evt.zoom;
+    appBox.value.scaleX = appBox.value.scaleY = initScale * evt.zoom;
     console.log('evt.zoom', evt.zoom);
-    console.log('scale', document.body.scaleX);
+    console.log('scale', appBox.value.scaleX);
   }
 })
 </script>
 
 <template>
-  <div class="app-container">
+  <div ref="appBox" id="app-container" class="app-container">
     <h2>手势放大缩小pinch</h2>
     <LineChart />
     <BarChart />
