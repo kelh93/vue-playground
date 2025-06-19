@@ -30,8 +30,8 @@ onMounted(() => {
       let newScale = transform.lastScale * evt.zoom
 
       // 限制缩放范围
-      if (newScale < transform.minScale) newScale = transform.minScale
-      if (newScale > transform.maxScale) newScale = transform.maxScale
+      // if (newScale < transform.minScale) newScale = transform.minScale
+      // if (newScale > transform.maxScale) newScale = transform.maxScale
 
       transform.scale = newScale
 
@@ -52,7 +52,7 @@ onMounted(() => {
     // 拖动处理（仅当放大时可移动）
     pressMove: (evt) => {
       // 只有当缩放大于1时才允许移动
-      if (transform.scale <= 1) return
+      // if (transform.scale <= 1) return
 
       // 计算新的位置
       transform.translateX = transform.lastTranslateX + evt.deltaX
