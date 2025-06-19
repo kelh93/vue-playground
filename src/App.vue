@@ -30,6 +30,7 @@ onMounted(() => {
     },
     // 捏合缩放
     pinch: (evt) => {
+      evt.preventDefault();
       // 计算新的缩放值
       let newScale = transform.lastScale * evt.zoom
 
@@ -80,7 +81,8 @@ onMounted(() => {
     pressEnd: () => {
       transform.lastTranslateX = transform.translateX
       transform.lastTranslateY = transform.translateY
-    }
+    },
+    passive: false
   })
 
   // 初始应用变换
@@ -152,6 +154,7 @@ function resetTransform() {
 
 .app-container iframe {
   border: solid 2px #f00;
+  touch-action: none;
 }
 
 .scale-info {
