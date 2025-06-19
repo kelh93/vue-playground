@@ -138,6 +138,10 @@ function resetTransform() {
   /* 防止浏览器默认的触摸行为干扰 */
 }
 
+.app-container iframe {
+  border: solid 2px #f00;
+}
+
 .scale-info {
   position: fixed;
   top: 10px;
