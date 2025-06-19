@@ -104,8 +104,8 @@ function resetTransform() {
 
 <template>
   <div class="container">
+    <h2>手势放大缩小与移动</h2>
     <div ref="appBox" id="app-container" class="app-container">
-      <h2>手势放大缩小与移动</h2>
       <iframe width="100%" height="100%" src="https://element-plus.org/zh-CN/component/table.html"
         frameborder="0"></iframe>
       <!-- <LineChart />
@@ -129,6 +129,11 @@ function resetTransform() {
 
 .app-container {
   width: 100%;
+  height: 50%;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: solid 1px #000;
   touch-action: none;
   /* 防止浏览器默认的触摸行为干扰 */
 }
