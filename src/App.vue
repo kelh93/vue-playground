@@ -105,9 +105,9 @@ function resetTransform() {
 <template>
   <div class="container">
     <h2>手势放大缩小与移动</h2>
-    <div ref="appBox" id="app-container" class="app-container">
-      <iframe width="100%" height="100%" src="https://element-plus.org/zh-CN/component/table.html"
-        frameborder="0"></iframe>
+    <div class="app-container">
+      <iframe id="app-container" ref="appBox" width="100%" height="100%"
+        src="https://element-plus.org/zh-CN/component/table.html" frameborder="0"></iframe>
       <!-- <LineChart />
       <BarChart /> -->
     </div>
