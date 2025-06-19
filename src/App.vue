@@ -21,9 +21,13 @@ const transform = reactive({
 })
 
 const appBox = ref(null)
+let startY = ref(0)
 
 onMounted(() => {
   const af = new AlloyFinger(appBox.value, {
+    touchStart: (evt) => {
+      startY.value = evt.touches[0].clientY
+    },
     // 捏合缩放
     pinch: (evt) => {
       // 计算新的缩放值
@@ -51,6 +55,11 @@ onMounted(() => {
 
     // 拖动处理（仅当放大时可移动）
     pressMove: (evt) => {
+      const deltaY = evt.touches[0].clientY - startY;
+      // 如果横向滑动，阻止默认事件（避免滚动冲突）
+      if (Math.abs(evt.deltaX) > Math.abs(deltaY)) {
+        evt.preventDefault();
+      }
       // 只有当缩放大于1时才允许移动
       // if (transform.scale <= 1) return
 
@@ -115,6 +124,9 @@ function resetTransform() {
       <div>缩放: {{ transform.scale.toFixed(2) }}</div>
       <div>位置: ({{ transform.translateX.toFixed(0) }}, {{ transform.translateY.toFixed(0) }})</div>
       <button @click="resetTransform" class="reset-btn">重置</button>
+    </div>
+    <div class="imgBox">
+      <img src="./assets/test.png" />
     </div>
   </div>
 </template>
