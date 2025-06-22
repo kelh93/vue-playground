@@ -26,13 +26,40 @@ const transform = reactive({
 
 const appBox = ref(null)
 let startY = ref(0)
+const isGestureActive = ref(false)
+const overlay = ref(null)
 
 onMounted(() => {
   console.log('onMounted')
   showToast('123')
   const af = new AlloyFinger(appBox.value, {
     touchStart: (evt) => {
+      overlay.value.classList.add('active');
+      isGestureActive.value = false;
       startY.value = evt.touches[0].clientY
+    },
+    touchMove: function (evt) {
+      // 如果移动距离超过阈值，判定为手势操作
+      if (Math.abs(evt.deltaX) > 10 || Math.abs(evt.deltaY) > 10) {
+        isGestureActive.value = true;
+      }
+    },
+    touchEnd: function () {
+      // 如果是点击（非手势），立即恢复穿透
+      if (!isGestureActive.value) {
+        overlay.value.classList.remove('active');
+      }
+    },
+    swipe: function (evt) {
+      console.log('检测到滑动手势:', evt.direction);
+      // 手势结束后恢复穿透
+      setTimeout(() => {
+        overlay.value.classList.remove('active');
+      }, 100);
+    },
+    tap: function () {
+      // 如果是点击，立即恢复穿透，允许事件传递到 iframe
+      overlay.value.classList.remove('active');
     },
     // 捏合缩放
     pinch: (evt) => {
@@ -147,8 +174,8 @@ function resetTransform() {
       <!-- <img ref="appBox" class="rectbox" src="./assets/test.png" /> -->
       <!-- <div ref="appBox" class="rectbox"></div> -->
       <!-- <div ref="appContainerBg" class="app-container-bg" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5);z-index: 1;"></div> -->
-      <iframe ref="appBox" class="rectbox" 
-        src="https://element-plus.org/zh-CN/component/table.html" frameborder="0"></iframe>
+      <iframe ref="appBox" class="rectbox" src="https://element-plus.org/zh-CN/component/table.html" frameborder="0"></iframe>
+      <div class="gesture-overlay" ref="overlay"></div>
       <!-- <LineChart />
       <BarChart /> -->
     </div>
@@ -181,7 +208,7 @@ function resetTransform() {
   overflow: hidden;
   border: solid 2px #fff;
   touch-action: none;
-  display: flex;
+  /* display: flex; */
   /* align-items: center; */
   /* justify-content: center; */
   /* 防止浏览器默认的触摸行为干扰 */
@@ -215,10 +242,26 @@ function resetTransform() {
 }
 
 .rectbox {
-  width: 50%;
-  height: 50%;
+  width: 100%;
+  height: 100%;
   /* background: red; */
   border-radius: 12px;
   transform-origin: 0 0;
+}
+.gesture-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: orange;
+  opacity: 0.5;
+  pointer-events: none; /* 默认不拦截事件 */
+  z-index: 10;
+}
+.gesture-overlay.active {
+  /* background-color: transparent; */
+  opacity: 0;
+  pointer-events: auto; /* 仅在手势激活时拦截 */
 }
 </style>
