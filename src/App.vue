@@ -29,10 +29,31 @@ let startY = ref(0)
 const isGestureActive = ref(false)
 const overlay = ref(null)
 
+// 1. iframe inner => swipe,tap
+// 2. overlay => pressMove,pinch,mutiple
+
 onMounted(() => {
   console.log('onMounted')
   showToast('123')
-  const af = new AlloyFinger(appBox.value, {
+  const iframeAF = new AlloyFinger(appBox.value, {
+    swipe: function (evt) {
+      console.log('检测到滑动手势:', evt.direction);
+      // 手势结束后恢复穿透
+      // setTimeout(() => {
+      //   overlay.value.classList.remove('active');
+      // }, 100);
+    },
+    multipointStart: function (evt) {
+      if (evt.touches.length > 1) {
+        showToast('iframe-多指触碰')
+        appContainerBg.value.style.display = 'block'
+        // evt.preventDefault();
+        // 禁用默认的双指缩放行为
+        // evt.stopPropagation();
+      }
+    },
+  })
+  const af = new AlloyFinger(overlay.value, {
     touchStart: (evt) => {
       overlay.value.classList.add('active');
       isGestureActive.value = false;
@@ -46,20 +67,20 @@ onMounted(() => {
     },
     touchEnd: function () {
       // 如果是点击（非手势），立即恢复穿透
-      if (!isGestureActive.value) {
-        overlay.value.classList.remove('active');
-      }
+      // if (!isGestureActive.value) {
+      //   overlay.value.classList.remove('active');
+      // }
     },
     swipe: function (evt) {
       console.log('检测到滑动手势:', evt.direction);
       // 手势结束后恢复穿透
-      setTimeout(() => {
-        overlay.value.classList.remove('active');
-      }, 100);
+      // setTimeout(() => {
+      //   overlay.value.classList.remove('active');
+      // }, 100);
     },
     tap: function () {
       // 如果是点击，立即恢复穿透，允许事件传递到 iframe
-      overlay.value.classList.remove('active');
+      // overlay.value.classList.remove('active');
     },
     // 捏合缩放
     pinch: (evt) => {
@@ -85,6 +106,7 @@ onMounted(() => {
     },
     // 捏合结束时保存最后的缩放值
     pinchend: () => {
+      showToast('pinchend')
       transform.lastScale = transform.scale
     },
 
@@ -129,7 +151,10 @@ onMounted(() => {
         // 禁用默认的双指缩放行为
         // evt.stopPropagation();
       }
-
+    },
+    multipointEnd: function(evt){
+      showToast('multipointEnd')
+      overlay.value.classList.remove('active');
     },
     // 移动结束时保存最后的位置
     pressEnd: () => {
@@ -165,6 +190,14 @@ function resetTransform() {
   transform.lastTranslateY = 0
   applyTransform()
 }
+
+const onOverLayClick = () => {
+  showToast('onOverLayClick')
+}
+
+const beginScale = () => {
+  overlay.value.classList.add('active')
+}
 </script>
 
 <template>
@@ -174,18 +207,16 @@ function resetTransform() {
       <!-- <img ref="appBox" class="rectbox" src="./assets/test.png" /> -->
       <!-- <div ref="appBox" class="rectbox"></div> -->
       <!-- <div ref="appContainerBg" class="app-container-bg" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5);z-index: 1;"></div> -->
-      <iframe ref="appBox" class="rectbox" src="https://element-plus.org/zh-CN/component/table.html" frameborder="0"></iframe>
-      <div class="gesture-overlay" ref="overlay"></div>
+      <iframe ref="appBox" class="rectbox" src="../test.html" frameborder="0"></iframe>
+      <div class="gesture-overlay" @click="onOverLayClick" ref="overlay"></div>
       <!-- <LineChart />
       <BarChart /> -->
     </div>
-    <div class="scale-info">
+    <div class="scale-info" @click="beginScale">缩放查看</div>
+    <!-- <div class="scale-info">
       <div>缩放: {{ transform.scale.toFixed(2) }}</div>
       <div>位置: ({{ transform.translateX.toFixed(0) }}, {{ transform.translateY.toFixed(0) }})</div>
       <button @click="resetTransform" class="reset-btn">重置</button>
-    </div>
-    <!-- <div class="imgBox">
-      <img src="./assets/test.png" />
     </div> -->
   </div>
 </template>
@@ -195,7 +226,7 @@ function resetTransform() {
   position: relative;
   width: 100%;
   height: 100vh;
-  overflow: hidden;
+  overflow: auto;
   background: #42b883;
 }
 
@@ -205,7 +236,6 @@ function resetTransform() {
   height: 50%;
   padding: 10px;
   box-sizing: border-box;
-  overflow: hidden;
   border: solid 2px #fff;
   touch-action: none;
   /* display: flex; */
@@ -216,12 +246,11 @@ function resetTransform() {
 
 .app-container iframe {
   border: solid 2px #f00;
-  touch-action: none;
 }
 
 .scale-info {
   position: fixed;
-  bottom: 10px;
+  bottom: 30%;
   right: 30%;
   background: rgba(0, 0, 0, 0.5);
   color: white;
@@ -260,8 +289,8 @@ function resetTransform() {
   z-index: 10;
 }
 .gesture-overlay.active {
-  /* background-color: transparent; */
-  opacity: 0;
+  background-color: blue;
+  opacity: 0.5;
   pointer-events: auto; /* 仅在手势激活时拦截 */
 }
 </style>

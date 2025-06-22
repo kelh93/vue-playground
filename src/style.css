@@ -27,7 +27,6 @@ body {
   height: 100vh;
   margin: 0;
   padding: 0;
-  overflow: hidden;
 }
 
 h1 {
@@ -56,10 +55,6 @@ button:focus-visible {
 
 .card {
   padding: 2em;
-}
-
-#app {
-  max-width: 1280px;
 }
 
 @media (prefers-color-scheme: light) {
