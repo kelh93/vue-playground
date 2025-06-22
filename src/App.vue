@@ -5,8 +5,12 @@ import LineChart from './components/LineChart.vue'
 import BarChart from './components/BarChart.vue'
 import AlloyFinger from 'alloyfinger'
 import VConsole from 'vconsole'
+import { showToast } from 'vant';
 
 const vConsole = new VConsole()
+
+const initScale = ref(1)
+const appContainerBg = ref(null)
 
 // 使用reactive存储变换状态
 const transform = reactive({
@@ -16,14 +20,16 @@ const transform = reactive({
   translateY: 0,
   lastTranslateX: 0,
   lastTranslateY: 0,
-  minScale: 0.5,  // 最小缩放比例
-  maxScale: 3     // 最大缩放比例
+  minScale: 1,  // 最小缩放比例
+  maxScale: 5    // 最大缩放比例
 })
 
 const appBox = ref(null)
 let startY = ref(0)
 
 onMounted(() => {
+  console.log('onMounted')
+  showToast('123')
   const af = new AlloyFinger(appBox.value, {
     touchStart: (evt) => {
       startY.value = evt.touches[0].clientY
@@ -31,6 +37,7 @@ onMounted(() => {
     // 捏合缩放
     pinch: (evt) => {
       evt.preventDefault();
+      // el.scaleX = el.scaleY = initScale.value * evt.zoom;
       // 计算新的缩放值
       let newScale = transform.lastScale * evt.zoom
 
@@ -43,7 +50,12 @@ onMounted(() => {
       // 应用变换
       applyTransform()
     },
+    // 长按
+    longTap: function (evt) { 
+      showToast('longTap')
+      evt.preventDefault()
 
+    },
     // 捏合结束时保存最后的缩放值
     pinchend: () => {
       transform.lastScale = transform.scale
@@ -51,22 +63,28 @@ onMounted(() => {
 
     // 双击重置所有变换
     doubleTap: () => {
-      resetTransform()
+      // resetTransform()
     },
 
     // 拖动处理（仅当放大时可移动）
     pressMove: (evt) => {
+      
+      // el.translateX += evt.deltaX;
+      // el.translateY += evt.deltaY;
+      // evt.preventDefault();
+
       const deltaY = evt.touches[0].clientY - startY;
       // 如果横向滑动，阻止默认事件（避免滚动冲突）
       if (Math.abs(evt.deltaX) > Math.abs(deltaY)) {
-        evt.preventDefault();
+        // evt.preventDefault();
       }
       // 只有当缩放大于1时才允许移动
       // if (transform.scale <= 1) return
 
       // 计算新的位置
-      transform.translateX = transform.lastTranslateX + evt.deltaX
-      transform.translateY = transform.lastTranslateY + evt.deltaY
+      transform.translateX += evt.deltaX
+      transform.translateY += evt.deltaY
+      evt.preventDefault();
 
       // 限制移动范围，防止内容移出太远
       // const maxTranslate = (transform.scale - 1) * 150 // 根据缩放比例计算最大移动距离
@@ -76,7 +94,16 @@ onMounted(() => {
       // 应用变换
       applyTransform()
     },
+    multipointStart: function (evt) {
+      if (evt.touches.length > 1) {
+        showToast('多指触碰')
+        appContainerBg.value.style.display = 'block'
+        // evt.preventDefault();
+        // 禁用默认的双指缩放行为
+        // evt.stopPropagation();
+      }
 
+    },
     // 移动结束时保存最后的位置
     pressEnd: () => {
       transform.lastTranslateX = transform.translateX
@@ -115,9 +142,12 @@ function resetTransform() {
 
 <template>
   <div class="container">
-    <h2>手势放大缩小与移动</h2>
+    <h2 style="text-align: center;">手势放大缩小与移动</h2>
     <div class="app-container">
-      <iframe id="app-container" ref="appBox" width="100%" height="100%"
+      <!-- <img ref="appBox" class="rectbox" src="./assets/test.png" /> -->
+      <!-- <div ref="appBox" class="rectbox"></div> -->
+      <!-- <div ref="appContainerBg" class="app-container-bg" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5);z-index: 1;"></div> -->
+      <iframe ref="appBox" class="rectbox" 
         src="https://element-plus.org/zh-CN/component/table.html" frameborder="0"></iframe>
       <!-- <LineChart />
       <BarChart /> -->
@@ -127,9 +157,9 @@ function resetTransform() {
       <div>位置: ({{ transform.translateX.toFixed(0) }}, {{ transform.translateY.toFixed(0) }})</div>
       <button @click="resetTransform" class="reset-btn">重置</button>
     </div>
-    <div class="imgBox">
+    <!-- <div class="imgBox">
       <img src="./assets/test.png" />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -139,16 +169,21 @@ function resetTransform() {
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  background: #42b883;
 }
 
 .app-container {
+  position: relative;
   width: 100%;
   height: 50%;
   padding: 10px;
   box-sizing: border-box;
   overflow: hidden;
-  border: solid 1px #000;
+  border: solid 2px #fff;
   touch-action: none;
+  display: flex;
+  /* align-items: center; */
+  /* justify-content: center; */
   /* 防止浏览器默认的触摸行为干扰 */
 }
 
@@ -159,8 +194,8 @@ function resetTransform() {
 
 .scale-info {
   position: fixed;
-  top: 10px;
-  right: 10px;
+  bottom: 10px;
+  right: 30%;
   background: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 10px;
@@ -179,18 +214,11 @@ function resetTransform() {
   cursor: pointer;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.rectbox {
+  width: 50%;
+  height: 50%;
+  /* background: red; */
+  border-radius: 12px;
+  transform-origin: 0 0;
 }
 </style>
