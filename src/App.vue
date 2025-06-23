@@ -99,7 +99,7 @@ onMounted(() => {
       applyTransform()
     },
     // 长按
-    longTap: function (evt) { 
+    longTap: function (evt) {
       showToast('longTap')
       evt.preventDefault()
 
@@ -117,7 +117,7 @@ onMounted(() => {
 
     // 拖动处理（仅当放大时可移动）
     pressMove: (evt) => {
-      
+
       // el.translateX += evt.deltaX;
       // el.translateY += evt.deltaY;
       // evt.preventDefault();
@@ -152,7 +152,7 @@ onMounted(() => {
         // evt.stopPropagation();
       }
     },
-    multipointEnd: function(evt){
+    multipointEnd: function (evt) {
       showToast('multipointEnd')
       overlay.value.classList.remove('active');
     },
@@ -207,7 +207,8 @@ const beginScale = () => {
       <!-- <img ref="appBox" class="rectbox" src="./assets/test.png" /> -->
       <!-- <div ref="appBox" class="rectbox"></div> -->
       <!-- <div ref="appContainerBg" class="app-container-bg" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5);z-index: 1;"></div> -->
-      <iframe ref="appBox" class="rectbox" src="../test.html" frameborder="0"></iframe>
+      <iframe ref="appBox" class="rectbox" src="https://element-plus.org/zh-CN/component/table.html"
+        frameborder="0"></iframe>
       <div class="gesture-overlay" @click="onOverLayClick" ref="overlay"></div>
       <!-- <LineChart />
       <BarChart /> -->
@@ -277,6 +278,7 @@ const beginScale = () => {
   border-radius: 12px;
   transform-origin: 0 0;
 }
+
 .gesture-overlay {
   position: absolute;
   top: 0;
@@ -285,12 +287,15 @@ const beginScale = () => {
   height: 100%;
   background-color: orange;
   opacity: 0.5;
-  pointer-events: none; /* 默认不拦截事件 */
+  pointer-events: none;
+  /* 默认不拦截事件 */
   z-index: 10;
 }
+
 .gesture-overlay.active {
   background-color: blue;
   opacity: 0.5;
-  pointer-events: auto; /* 仅在手势激活时拦截 */
+  pointer-events: auto;
+  /* 仅在手势激活时拦截 */
 }
 </style>
